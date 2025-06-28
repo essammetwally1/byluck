@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class RouletteItem extends StatelessWidget {
-  const RouletteItem({super.key});
+class RouletteScreen extends StatelessWidget {
+  const RouletteScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
