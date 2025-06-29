@@ -145,16 +145,12 @@ class _DiceItemState extends State<DiceItem>
 
     return Scaffold(
       body: Container(
-        margin: const EdgeInsets.all(16),
+        margin: const EdgeInsets.all(2),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(32),
           color: Colors.grey[200],
           boxShadow: [
-            BoxShadow(
-              color: Colors.red.withOpacity(0.3),
-              blurRadius: 20,
-              spreadRadius: 2,
-            ),
+            BoxShadow(color: Colors.red, blurRadius: 20, spreadRadius: 2),
           ],
         ),
         child: Column(
