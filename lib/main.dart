@@ -1,8 +1,16 @@
-import 'package:byluck/screens/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:byluck/screens/main_screen.dart';
 
 void main() {
-  runApp(const ByLuck());
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  // simulate app startup
+  Future.delayed(const Duration(seconds: 1), () {
+    FlutterNativeSplash.remove();
+    runApp(const ByLuck());
+  });
 }
 
 class ByLuck extends StatelessWidget {
@@ -22,8 +30,7 @@ class ByLuck extends StatelessWidget {
           backgroundColor: Color(0xFF2C2C2C),
         ),
       ),
-
-      home: MainScreen(),
+      home: const MainScreen(),
     );
   }
 }
