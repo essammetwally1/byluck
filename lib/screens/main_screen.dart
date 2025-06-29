@@ -42,8 +42,8 @@ class _MainScreenState extends State<MainScreen>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _spacing = Tween<double>(
-      begin: 2.0,
-      end: 10.0,
+      begin: 0.0,
+      end: 15.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
@@ -55,31 +55,48 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: ByluckAppTitle(
-          controller: _controller,
-          scale: _scale,
-          spacing: _spacing,
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashFactory: NoSplash.splashFactory,
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(80),
+          child: ByluckAppTitle(
+            controller: _controller,
+            scale: _scale,
+            spacing: _spacing,
+          ),
         ),
-      ),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: _screens[_currentIndex],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        fixedColor: Colors.red,
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        onTap: (index) => setState(() => _currentIndex = index),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Chooser'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Arrow'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Roulette'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Random'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Dice'),
-        ],
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: _screens[_currentIndex],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          fixedColor: Colors.red,
+          currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,
+          onTap: (index) => setState(() => _currentIndex = index),
+
+          selectedLabelStyle: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+          ),
+
+          items: const [
+            BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Chooser'),
+            BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Arrow'),
+            BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Roulette'),
+            BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Random'),
+            BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Dice'),
+          ],
+        ),
       ),
     );
   }

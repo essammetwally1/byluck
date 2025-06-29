@@ -15,7 +15,7 @@ class ByLuck extends StatelessWidget {
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: const Color(0xFF202020),
         primaryColor: Colors.blue,
-        splashFactory: NoSplash.splashFactory, // 👈 disables ripple
+        splashFactory: NoSplash.splashFactory,
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           selectedItemColor: Colors.blue,
           unselectedItemColor: Colors.grey,
