@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:byluck/compomants/positioned_circle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:byluck/widgets/positioned_circle.dart';
 
 class ChooserItem extends StatefulWidget {
   const ChooserItem({super.key});
