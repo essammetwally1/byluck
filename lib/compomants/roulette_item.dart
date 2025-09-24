@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:byluck/providers/sound_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:provider/provider.dart';
 
 class RouletteItem extends StatefulWidget {
   const RouletteItem({super.key});
@@ -24,17 +26,17 @@ class _RouletteItemState extends State<RouletteItem>
     final colors = [
       Colors.red[700]!,
       Colors.orange[700]!,
-
-      Colors.red[500]!,
-      Colors.orange[500]!,
-
-      Colors.red[300]!,
-      Colors.orange[300]!,
-      Colors.red,
-      Colors.orange,
       Colors.purpleAccent,
 
-      Colors.greenAccent,
+      Colors.red[500]!,
+      Colors.green[300]!,
+
+      Colors.orange[500]!,
+
+      Colors.amber[300]!,
+      Colors.grey[400]!,
+      Colors.orange,
+      Colors.purpleAccent,
     ];
     return colors[index % colors.length];
   }
@@ -56,9 +58,14 @@ class _RouletteItemState extends State<RouletteItem>
   }
 
   void _showResultDialog() {
+    if (count >= 2) {
+      Provider.of<SoundProvider>(
+        context,
+        listen: false,
+      ).playSound('roulette_winner');
+    }
     showDialog(
       barrierColor: Colors.white.withValues(alpha: .7),
-
       context: context,
       builder:
           (context) => AlertDialog(
@@ -97,7 +104,15 @@ class _RouletteItemState extends State<RouletteItem>
             actions: [
               TextButton(
                 child: Text('OK', style: TextStyle(color: Colors.red.shade300)),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  if (count >= 2) {
+                    Provider.of<SoundProvider>(
+                      context,
+                      listen: false,
+                    ).stopSound();
+                  }
+                  Navigator.pop(context);
+                },
               ),
             ],
             shape: RoundedRectangleBorder(
@@ -109,9 +124,13 @@ class _RouletteItemState extends State<RouletteItem>
 
   void _spin() {
     final randomIndex = Random().nextInt(items.length);
+    Provider.of<SoundProvider>(
+      context,
+      listen: false,
+    ).playSound('roulette_spin');
     selected.add(randomIndex);
     setState(() {
-      _lastWinner = items[randomIndex]; // Store the winning prize
+      _lastWinner = items[randomIndex];
     });
   }
 

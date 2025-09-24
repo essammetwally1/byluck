@@ -1,8 +1,15 @@
+import 'package:byluck/providers/sound_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:byluck/screens/main_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const ByLuck());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => SoundProvider(),
+      child: const ByLuck(),
+    ),
+  );
 }
 
 class ByLuck extends StatelessWidget {

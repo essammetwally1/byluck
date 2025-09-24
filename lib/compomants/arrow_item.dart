@@ -1,6 +1,9 @@
+import 'package:byluck/providers/sound_provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
+
+import 'package:provider/provider.dart';
 
 class ArrowItem extends StatefulWidget {
   final Color arrowColor;
@@ -50,6 +53,7 @@ class _ArrowItemState extends State<ArrowItem> with TickerProviderStateMixin {
 
   void _startSpin() {
     if (_isSpinning) return;
+    Provider.of<SoundProvider>(context, listen: false).playSound('arrow_spin');
     _isSpinning = true;
     _colorOpacity = 0.3;
 
@@ -72,6 +76,7 @@ class _ArrowItemState extends State<ArrowItem> with TickerProviderStateMixin {
         _colorOpacity = (_colorOpacity + 0.008).clamp(0.3, 1.0);
         _velocity *= 0.98;
         if (_velocity <= 0.01) {
+          Provider.of<SoundProvider>(context, listen: false).stopSound();
           _velocity = 0;
           _isSpinning = false;
           _colorOpacity = 1.0;

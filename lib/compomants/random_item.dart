@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'package:byluck/providers/sound_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class RandomItem extends StatefulWidget {
   const RandomItem({super.key});
@@ -14,15 +16,19 @@ class _RandomItemState extends State<RandomItem> {
   bool _isGenerating = false;
   double _progressValue = 0.0;
   final Random _random = Random();
+  void _stopSound() {
+    Provider.of<SoundProvider>(context, listen: false).stopSound();
+  }
 
   Future<void> _generateRandomNumber() async {
+    Provider.of<SoundProvider>(context, listen: false).playSound('random');
     setState(() {
       _isGenerating = true;
       _progressValue = 0.0;
       _randomNumber = 0;
     });
 
-    const totalDuration = Duration(seconds: 1);
+    const totalDuration = Duration(milliseconds: 1500);
     const interval = Duration(milliseconds: 50);
     final steps = totalDuration.inMilliseconds ~/ interval.inMilliseconds;
     final increment = 1.0 / steps;
@@ -77,7 +83,7 @@ class _RandomItemState extends State<RandomItem> {
               SizedBox(
                 width: size.width * 0.6,
                 child: ElevatedButton(
-                  onPressed: _isGenerating ? null : _generateRandomNumber,
+                  onPressed: _isGenerating ? _stopSound : _generateRandomNumber,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red[600],
                     foregroundColor: Colors.white,

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:byluck/compomants/positioned_circle.dart';
+import 'package:byluck/providers/sound_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class ChooserItem extends StatefulWidget {
   const ChooserItem({super.key});
@@ -129,6 +131,7 @@ class _ChooserItemState extends State<ChooserItem>
 
         // If winner was removed by user, clear all touches and reset completely
         if (isWinnerRemoved) {
+          Provider.of<SoundProvider>(context, listen: false).stopSound();
           for (final touch in _touches.values) {
             touch.controller.dispose();
           }
@@ -163,10 +166,18 @@ class _ChooserItemState extends State<ChooserItem>
         _selectedId = winnerId;
         _acceptInput = false;
 
-        // Make winner animation faster
+        // Stop the pulsing animation for winner
+        _touches[winnerId]!.controller.stop();
+
+        // Start fast continuous rotation animation
         _touches[winnerId]!.controller.duration = const Duration(
-          milliseconds: 150,
+          milliseconds: 400,
         );
+        _touches[winnerId]!.controller.repeat(reverse: false);
+
+        // Change to red color and larger scale for winner
+        _touches[winnerId]!.scale = 1.5; // Larger size for emphasis
+        _touches[winnerId]!.isWinner = true; // Add this flag to TouchData
 
         // Remove non-winning touches immediately
         final idsToRemove =
@@ -177,8 +188,10 @@ class _ChooserItemState extends State<ChooserItem>
         }
       });
 
-      // REMOVED the automatic 2-second delay and clearing
-      // Winner now stays until user lifts finger
+      Provider.of<SoundProvider>(
+        context,
+        listen: false,
+      ).playSound('roulette_winner');
     } catch (e) {
       debugPrint('Selection error: $e');
     }
@@ -221,7 +234,7 @@ class TextInCenter extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 shadows: [
                   Shadow(
-                    color: Colors.black.withOpacity(0.8),
+                    color: Colors.black.withValues(alpha: .8),
                     blurRadius: 3,
                     offset: const Offset(1, 1),
                   ),
@@ -240,11 +253,13 @@ class TouchData {
   final AnimationController controller;
   final Animation<double> animation;
   double scale;
+  bool isWinner;
 
   TouchData({
     required this.position,
     required this.controller,
     required this.animation,
     this.scale = 1.0,
+    this.isWinner = false,
   });
 }

@@ -3,8 +3,10 @@ import 'package:byluck/compomants/chooser_item.dart';
 import 'package:byluck/compomants/dice_item.dart';
 import 'package:byluck/compomants/random_item.dart';
 import 'package:byluck/compomants/roulette_item.dart';
+import 'package:byluck/providers/sound_provider.dart';
 import 'package:byluck/widgets/byluck_app_title.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -72,7 +74,13 @@ class _MainScreenState extends State<MainScreen>
         fixedColor: Colors.red,
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        onTap: (index) => setState(() => _currentIndex = index),
+        onTap: (index) {
+          if (index == _currentIndex) return;
+          Provider.of<SoundProvider>(context, listen: false).stopSound();
+          setState(() {
+            _currentIndex = index;
+          });
+        },
 
         selectedLabelStyle: const TextStyle(
           fontSize: 18,

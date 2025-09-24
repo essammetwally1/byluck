@@ -1,5 +1,8 @@
+import 'package:byluck/providers/sound_provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+
+import 'package:provider/provider.dart';
 
 class DiceItem extends StatefulWidget {
   const DiceItem({super.key});
@@ -51,6 +54,8 @@ class _DiceItemState extends State<DiceItem>
 
   Future<void> _rollDice() async {
     if (_isRolling) return;
+
+    Provider.of<SoundProvider>(context, listen: false).playSound('dice_roll');
     _rotationDirection *= -1;
 
     setState(() => _isRolling = true);
@@ -141,7 +146,7 @@ class _DiceItemState extends State<DiceItem>
 
   @override
   Widget build(BuildContext context) {
-    final diceSize = MediaQuery.of(context).size.width * 0.3;
+    final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Container(
@@ -156,23 +161,55 @@ class _DiceItemState extends State<DiceItem>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-              width: 150,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: .1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                _sum == 0 ? 'Tap to Roll' : 'Sum: $_sum',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
-                ),
-              ),
-            ),
+            SizedBox(height: 100),
+            _sum > 0
+                ? Container(
+                  width: size.width * .4,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 5,
+                    horizontal: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.amber.withValues(alpha: 0.5),
+                        blurRadius: 1,
+                        offset: const Offset(0, 6),
+                      ),
+                      BoxShadow(
+                        color: Colors.red.withValues(alpha: 0.4),
+                        blurRadius: 2,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                    border: Border.all(color: Colors.red[200]!, width: 3),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.celebration_outlined,
+                        size: 32,
+                        color: Colors.red[200],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '$_sum',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.red[800],
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+                : SizedBox(height: 100),
+            Spacer(),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -181,39 +218,70 @@ class _DiceItemState extends State<DiceItem>
                   rotationAnimation: _rotationAnimation,
                   bounceAnimation: _bounceAnimation,
                   direction: _rotationDirection,
-                  size: diceSize,
-                  child: _buildDiceFace(_dice1Value, diceSize),
+                  size: size.width * .3,
+                  child: _buildDiceFace(_dice1Value, size.width * .3),
                 ),
                 _AnimatedDice(
                   controller: _controller,
                   rotationAnimation: _rotationAnimation,
                   bounceAnimation: _bounceAnimation,
                   direction: -_rotationDirection,
-                  size: diceSize,
-                  child: _buildDiceFace(_dice2Value, diceSize),
+                  size: size.width * .3,
+                  child: _buildDiceFace(_dice2Value, size.width * .3),
                 ),
               ],
             ),
+            Spacer(),
             ElevatedButton(
               onPressed: _rollDice,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red[600],
+                backgroundColor: Colors.red[500],
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
+                  horizontal: 35,
                   vertical: 16,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(15),
                 ),
-                elevation: 8,
-                shadowColor: Colors.red.withValues(alpha: 0.4),
+                elevation: 5,
+                shadowColor: Colors.red.withValues(alpha: .3),
               ),
-              child: const Text(
-                'ROLL DICE',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              child: AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                child:
+                    _sum == 0
+                        ? const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.casino, size: 22),
+                            SizedBox(width: 8),
+                            Text(
+                              'Roll Dice',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        )
+                        : const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.refresh, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Roll Again',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
               ),
             ),
+            SizedBox(height: size.width * .3),
           ],
         ),
       ),
@@ -243,33 +311,130 @@ class _AnimatedDice extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
-        return Transform(
-          transform:
-              Matrix4.identity()
-                ..rotateY(rotationAnimation.value * direction)
-                ..translate(0.0, -20.0 * bounceAnimation.value),
-          alignment: Alignment.center,
-          child: Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.red[200],
-                borderRadius: BorderRadius.circular(12),
+        final double progress = controller.value;
+        final bool isSpinning = progress < 0.7;
+        final bool isSettling = progress >= 0.7 && progress < 1.0;
+        final bool isComplete = progress == 1.0;
+
+        // Natural rotation with easing
+        final double rotation = rotationAnimation.value * direction;
+        final double easedRotation =
+            isSpinning
+                ? rotation
+                : rotation + (0 - rotation) * ((progress - 0.7) / 0.3);
+
+        // Enhanced bounce with physics
+        final double bounceHeight = -30.0 * bounceAnimation.value;
+        final double settleBounce =
+            isSettling ? 5.0 * sin((progress - 0.7) * 10 * pi) : 0.0;
+
+        // Visual effects based on animation phase
+        final double shadowBlur = isSpinning ? 20.0 : 15.0;
+        final double shadowSpread = isSpinning ? 3.0 : 2.0;
+        final double glowIntensity = isSettling ? (progress - 0.7) * 3 : 0.0;
+        final double scale = isComplete ? 1.05 : 1.0;
+
+        return Transform.translate(
+          offset: Offset(0.0, bounceHeight + settleBounce),
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 1.0, end: 1.0).animate(
+              CurvedAnimation(
+                parent: controller,
+                curve: const Interval(0.8, 1.0, curve: Curves.elasticOut),
               ),
-              child: child,
+            ),
+            child: Transform.rotate(
+              angle: easedRotation,
+              alignment: Alignment.center,
+              child: Container(
+                width: size * scale,
+                height: size * scale,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    // Main shadow
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.25),
+                      blurRadius: shadowBlur,
+                      spreadRadius: shadowSpread,
+                      offset: const Offset(0, 6),
+                    ),
+                    // Inner highlight
+                    BoxShadow(
+                      color: Colors.white.withValues(alpha: 0.6),
+                      blurRadius: 4,
+                      spreadRadius: -2,
+                      offset: const Offset(0, -3),
+                    ),
+                    // Settling glow effect
+                    if (isSettling)
+                      BoxShadow(
+                        color: Colors.amber,
+                        blurRadius: 30 * glowIntensity,
+                        spreadRadius: 8 * glowIntensity,
+                      ),
+                    // Final highlight
+                    if (isComplete)
+                      BoxShadow(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        blurRadius: 15,
+                        spreadRadius: 2,
+                        offset: const Offset(0, -2),
+                      ),
+                  ],
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white,
+                      Colors.grey.shade100,
+                      if (isComplete) Colors.amber.shade50,
+                    ],
+                  ),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    width: 2,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: EdgeInsets.all(isSpinning ? 6 : 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.red[300]!,
+                          Colors.red[500]!,
+                          if (isSettling) Colors.amber[400]!,
+                          if (isComplete) Colors.red[600]!,
+                        ],
+                      ),
+                      boxShadow: [
+                        if (isComplete)
+                          BoxShadow(
+                            color: Colors.red[300]!.withValues(alpha: 0.6),
+                            blurRadius: 20,
+                            spreadRadius: 3,
+                          ),
+                      ],
+                    ),
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 200),
+                      scale: isComplete ? 1.15 : 1.0,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 300),
+                        opacity: isSpinning ? 0.9 : 1.0,
+                        child: Center(child: child),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         );
