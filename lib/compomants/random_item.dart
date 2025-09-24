@@ -29,8 +29,15 @@ class _RandomItemState extends State<RandomItem> {
 
     for (int i = 0; i < steps; i++) {
       await Future.delayed(interval);
+      if (!mounted) return;
       setState(() => _progressValue = (i + 1) * increment);
     }
+
+    if (!mounted) return;
+    setState(() {
+      _randomNumber = _random.nextInt(101);
+      _isGenerating = false;
+    });
 
     setState(() {
       _randomNumber = _random.nextInt(101);
@@ -79,7 +86,7 @@ class _RandomItemState extends State<RandomItem> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     elevation: 8,
-                    shadowColor: Colors.red.withOpacity(0.4),
+                    shadowColor: Colors.red.withValues(alpha: 0.4),
                   ),
                   child: Text(
                     'Generate Number',
@@ -123,7 +130,7 @@ class _RandomItemState extends State<RandomItem> {
                             shadows: [
                               Shadow(
                                 blurRadius: 10,
-                                color: Colors.red.withOpacity(0.3),
+                                color: Colors.red.withValues(alpha: 0.3),
                               ),
                             ],
                           ),

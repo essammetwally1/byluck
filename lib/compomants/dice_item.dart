@@ -157,13 +157,15 @@ class _DiceItemState extends State<DiceItem>
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
+              width: 150,
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: .1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 _sum == 0 ? 'Tap to Roll' : 'Sum: $_sum',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -205,7 +207,7 @@ class _DiceItemState extends State<DiceItem>
                   borderRadius: BorderRadius.circular(20),
                 ),
                 elevation: 8,
-                shadowColor: Colors.red.withOpacity(0.4),
+                shadowColor: Colors.red.withValues(alpha: 0.4),
               ),
               child: const Text(
                 'ROLL DICE',
@@ -255,7 +257,7 @@ class _AnimatedDice extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 10,
                   spreadRadius: 2,
                 ),

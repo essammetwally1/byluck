@@ -15,7 +15,7 @@ class _RouletteItemState extends State<RouletteItem>
     with TickerProviderStateMixin {
   StreamController<int> selected = StreamController<int>();
   final TextEditingController _textController = TextEditingController();
-  List<String> items = ['Tap', 'Here'];
+  List<String> items = ['Write', 'Here'];
   int count = 0;
   String? _lastWinner; // Store the last winning prize
 
@@ -57,13 +57,19 @@ class _RouletteItemState extends State<RouletteItem>
 
   void _showResultDialog() {
     showDialog(
+      barrierColor: Colors.white.withValues(alpha: .7),
+
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text(
-              'Congratulations!',
-              style: TextStyle(color: Colors.black),
-            ),
+            backgroundColor: Colors.red.shade50,
+            title:
+                count >= 2
+                    ? Text(
+                      'Congratulations!',
+                      style: TextStyle(color: Colors.black),
+                    )
+                    : null,
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -95,7 +101,7 @@ class _RouletteItemState extends State<RouletteItem>
               ),
             ],
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(50),
             ),
           ),
     );
@@ -113,6 +119,9 @@ class _RouletteItemState extends State<RouletteItem>
   void dispose() {
     selected.close();
     _textController.dispose();
+    count = 0;
+    items = ['Write', 'Here'];
+
     super.dispose();
   }
 
@@ -153,7 +162,10 @@ class _RouletteItemState extends State<RouletteItem>
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextField(
+                    cursorColor: Colors.red,
+
                     controller: _textController,
+                    onTapOutside: (event) => FocusScope.of(context).unfocus(),
                     onSubmitted:
                         (_) =>
                             _textController.text.trim().isEmpty
@@ -164,7 +176,9 @@ class _RouletteItemState extends State<RouletteItem>
                       labelText: 'Add item',
                       labelStyle: TextStyle(color: Colors.red[300]),
                       hintText: 'Enter item',
-                      hintStyle: TextStyle(color: Colors.black.withOpacity(.2)),
+                      hintStyle: TextStyle(
+                        color: Colors.black.withValues(alpha: .2),
+                      ),
                       border: InputBorder.none,
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.add_circle, color: Colors.red),
@@ -253,7 +267,7 @@ class _RouletteItemState extends State<RouletteItem>
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: _spin,
+                  onPressed: count < 2 ? _showResultDialog : _spin,
                   child: Text(
                     'SPIN',
                     style: TextStyle(
@@ -272,7 +286,7 @@ class _RouletteItemState extends State<RouletteItem>
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  items = ['Tap', 'Here'];
+                  items = ['Write', 'Here'];
                   count = 0;
                   _lastWinner = null;
                 });

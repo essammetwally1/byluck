@@ -105,7 +105,7 @@ class _RandomBodyState extends State<RandomBody> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     elevation: 8,
-                    shadowColor: Colors.red.withOpacity(0.4),
+                    shadowColor: Colors.red.withValues(alpha: 0.4),
                   ),
                   child: Text(
                     'Generate Number',
@@ -153,7 +153,7 @@ class _RandomBodyState extends State<RandomBody> {
                       shadows: [
                         Shadow(
                           blurRadius: 10,
-                          color: Colors.red.withOpacity(0.3),
+                          color: Colors.red.withValues(alpha: 0.3),
                         ),
                       ],
                     ),

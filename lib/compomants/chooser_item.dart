@@ -44,14 +44,15 @@ class _ChooserItemState extends State<ChooserItem>
               }
             },
             onPointerMove: (event) {
-              if (_acceptInput || _selectedId == event.pointer) {
-                setState(() {
-                  _touches[event.pointer]?.position = event.localPosition;
-                });
-              }
+              // Allow movement for all touches, but only winner can move after selection
+              setState(() {
+                _touches[event.pointer]?.position = event.localPosition;
+              });
             },
-            onPointerUp: (event) => _removeTouch(event.pointer),
-            onPointerCancel: (event) => _removeTouch(event.pointer),
+            onPointerUp:
+                (event) => _removeTouch(event.pointer, isWinnerRemoved: true),
+            onPointerCancel:
+                (event) => _removeTouch(event.pointer, isWinnerRemoved: true),
             child: Container(
               margin: const EdgeInsets.all(2),
               decoration: BoxDecoration(
@@ -63,7 +64,7 @@ class _ChooserItemState extends State<ChooserItem>
               ),
               child: Stack(
                 children: [
-                  if (_touches.isEmpty) Center(child: TextInCenter()),
+                  if (_touches.isEmpty) const Center(child: TextInCenter()),
                   ..._touches.entries.map((entry) {
                     return PositionedCircle(
                       key: ValueKey(entry.key),
@@ -112,16 +113,29 @@ class _ChooserItemState extends State<ChooserItem>
     _resetSelectionTimer();
   }
 
-  void _removeTouch(int pointerId) {
+  void _removeTouch(int pointerId, {bool isWinnerRemoved = false}) {
     if (!_touches.containsKey(pointerId)) return;
+
+    // If this is the winner being removed by user action
+    final bool isWinner = pointerId == _selectedId;
 
     setState(() {
       _touches[pointerId]?.controller.dispose();
       _touches.remove(pointerId);
-      if (pointerId == _selectedId) {
+
+      if (isWinner) {
         _selectedId = null;
         _acceptInput = true;
+
+        // If winner was removed by user, clear all touches and reset completely
+        if (isWinnerRemoved) {
+          for (final touch in _touches.values) {
+            touch.controller.dispose();
+          }
+          _touches.clear();
+        }
       }
+
       _resetSelectionTimer();
     });
   }
@@ -148,11 +162,13 @@ class _ChooserItemState extends State<ChooserItem>
       setState(() {
         _selectedId = winnerId;
         _acceptInput = false;
+
+        // Make winner animation faster
         _touches[winnerId]!.controller.duration = const Duration(
           milliseconds: 150,
         );
 
-        // Remove non-winning touches
+        // Remove non-winning touches immediately
         final idsToRemove =
             _touches.keys.where((id) => id != winnerId).toList();
         for (final id in idsToRemove) {
@@ -161,12 +177,8 @@ class _ChooserItemState extends State<ChooserItem>
         }
       });
 
-      await Future.delayed(const Duration(seconds: 2));
-      setState(() {
-        _touches.clear();
-        _selectedId = null;
-        _acceptInput = true;
-      });
+      // REMOVED the automatic 2-second delay and clearing
+      // Winner now stays until user lifts finger
     } catch (e) {
       debugPrint('Selection error: $e');
     }
@@ -198,7 +210,7 @@ class TextInCenter extends StatelessWidget {
                 fontSize: 20,
                 color: Colors.red[300],
                 fontWeight: FontWeight.bold,
-                shadows: [Shadow(color: Colors.black, blurRadius: 2)],
+                shadows: [const Shadow(color: Colors.black, blurRadius: 2)],
               ),
             ),
             TextSpan(

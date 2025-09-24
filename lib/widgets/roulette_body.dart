@@ -141,7 +141,7 @@ class _RouletteBodyState extends State<RouletteBody>
                         labelStyle: TextStyle(color: Colors.red[300]),
                         hintText: 'Enter item',
                         hintStyle: TextStyle(
-                          color: Colors.black.withOpacity(.2),
+                          color: Colors.black.withValues(alpha: .2),
                         ),
                         border: InputBorder.none,
                         suffixIcon: IconButton(

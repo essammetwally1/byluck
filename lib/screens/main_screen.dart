@@ -55,48 +55,41 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        splashFactory: NoSplash.splashFactory,
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: ByluckAppTitle(
+          controller: _controller,
+          scale: _scale,
+          spacing: _spacing,
+        ),
       ),
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(80),
-          child: ByluckAppTitle(
-            controller: _controller,
-            scale: _scale,
-            spacing: _spacing,
-          ),
-        ),
-        body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          child: _screens[_currentIndex],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          fixedColor: Colors.red,
-          currentIndex: _currentIndex,
-          type: BottomNavigationBarType.fixed,
-          onTap: (index) => setState(() => _currentIndex = index),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: _screens[_currentIndex],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        fixedColor: Colors.red,
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        onTap: (index) => setState(() => _currentIndex = index),
 
-          selectedLabelStyle: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-          unselectedLabelStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-          ),
-
-          items: const [
-            BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Chooser'),
-            BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Arrow'),
-            BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Roulette'),
-            BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Random'),
-            BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Dice'),
-          ],
+        selectedLabelStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+        ),
+
+        items: const [
+          BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Chooser'),
+          BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Arrow'),
+          BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Roulette'),
+          BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Random'),
+          BottomNavigationBarItem(icon: SizedBox.shrink(), label: 'Dice'),
+        ],
       ),
     );
   }

@@ -120,15 +120,15 @@ class _ArrowItemState extends State<ArrowItem> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.red.withOpacity(.2),
+                        color: Colors.red.withValues(alpha: .2),
                         blurRadius: 10,
                       ),
                     ],
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        Colors.red.withOpacity(0.2),
-                        Colors.red.withOpacity(0.5),
+                        Colors.red.withValues(alpha: 0.2),
+                        Colors.red.withValues(alpha: 0.5),
                       ],
                     ),
                   ),
@@ -140,7 +140,9 @@ class _ArrowItemState extends State<ArrowItem> with TickerProviderStateMixin {
                         child: CustomPaint(
                           size: Size(arrowLength, 50),
                           painter: _ArrowPainter(
-                            color: widget.arrowColor.withOpacity(_colorOpacity),
+                            color: widget.arrowColor.withValues(
+                              alpha: _colorOpacity,
+                            ),
                           ),
                         ),
                       ),
@@ -152,7 +154,7 @@ class _ArrowItemState extends State<ArrowItem> with TickerProviderStateMixin {
                             BoxShadow(color: Colors.white, blurRadius: 3),
                           ],
                           shape: BoxShape.circle,
-                          color: Colors.black.withOpacity(.5),
+                          color: Colors.black.withValues(alpha: .5),
                         ),
                       ),
                       Container(
